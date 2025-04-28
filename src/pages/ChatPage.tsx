@@ -17,14 +17,14 @@ const ChatPage = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-gradient-sci">
+    <div className="h-screen flex flex-col md:flex-row bg-background">
       {/* Sidebar - Hidden on mobile when in chat view */}
-      <div className={`${isMobile ? 'hidden' : 'w-80'} border-r border-scifi-primary`}>
+      <div className={`${isMobile ? 'hidden' : 'w-80'} border-r border-border`}>
         <ChatSidebar />
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-scifi-secondary">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
         <ChatHeader />
         <ChatMessages />
         <ChatInput />
@@ -34,4 +34,3 @@ const ChatPage = () => {
 };
 
 export default ChatPage;
-

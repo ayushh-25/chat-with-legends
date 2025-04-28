@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useChatContext } from '@/contexts/ChatContext';
 import { Button } from '@/components/ui/button';
 import {
@@ -27,12 +27,12 @@ const ChatHeader = () => {
   };
 
   return (
-    <div className="flex items-center justify-between bg-scifi-dark p-3 border-b border-scifi-primary">
+    <div className="flex items-center justify-between bg-background p-3 border-b border-border">
       <div className="flex items-center flex-1">
         <Button 
           variant="ghost" 
           size="icon"
-          className="md:hidden mr-2 text-scifi-primary hover:text-scifi-primary/80"
+          className="md:hidden mr-2"
           onClick={() => navigate('/')}
         >
           <ArrowLeft className="h-5 w-5" />
@@ -41,7 +41,7 @@ const ChatHeader = () => {
         {currentLegend && (
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-              <div className="h-10 w-10 rounded-full overflow-hidden mr-3 border border-scifi-primary">
+              <div className="h-10 w-10 rounded-full overflow-hidden mr-3 border border-border">
                 <img
                   src={currentLegend.image}
                   alt={currentLegend.name}
@@ -49,10 +49,10 @@ const ChatHeader = () => {
                 />
               </div>
               <div>
-                <h2 className="font-semibold text-scifi-primary">
+                <h2 className="font-semibold text-foreground">
                   {currentLegend.name}
                 </h2>
-                <p className="text-xs text-scifi-light">
+                <p className="text-xs text-muted-foreground">
                   {currentConversation?.messages.length} messages
                 </p>
               </div>
@@ -61,15 +61,14 @@ const ChatHeader = () => {
               value={currentLegend.id}
               onValueChange={handleLegendChange}
             >
-              <SelectTrigger className="w-[180px] bg-scifi-dark border-scifi-primary text-scifi-primary">
+              <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Switch Legend" />
               </SelectTrigger>
-              <SelectContent className="bg-scifi-dark border-scifi-primary">
+              <SelectContent>
                 {legends.map((legend) => (
                   <SelectItem
                     key={legend.id}
                     value={legend.id}
-                    className="text-scifi-primary hover:bg-scifi-accent/20"
                   >
                     {legend.name}
                   </SelectItem>
@@ -84,4 +83,3 @@ const ChatHeader = () => {
 };
 
 export default ChatHeader;
-

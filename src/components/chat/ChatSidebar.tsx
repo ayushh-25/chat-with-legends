@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageSquare, User } from 'lucide-react';
+import { ArrowLeft, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
@@ -17,7 +17,7 @@ const ChatSidebar = () => {
   };
 
   return (
-    <div className="h-full flex flex-col bg-white border-r">
+    <div className="h-full flex flex-col bg-background border-r">
       <div className="p-3 flex items-center justify-between">
         <Button
           onClick={() => navigate('/')}
@@ -42,7 +42,7 @@ const ChatSidebar = () => {
       <ScrollArea className="flex-1">
         <div className="p-2 space-y-2">
           {conversations.length === 0 ? (
-            <p className="text-center text-gray-500 text-sm p-4">
+            <p className="text-center text-muted-foreground text-sm p-4">
               No conversations yet
             </p>
           ) : (
@@ -57,8 +57,8 @@ const ChatSidebar = () => {
                   <div
                     key={conversation.id}
                     className={cn(
-                      "flex items-center p-2 rounded-md cursor-pointer hover:bg-gray-100 transition-colors",
-                      currentConversation?.id === conversation.id && "bg-legend-light-purple/20"
+                      "flex items-center p-2 rounded-md cursor-pointer hover:bg-accent transition-colors",
+                      currentConversation?.id === conversation.id && "bg-accent"
                     )}
                     onClick={() => selectConversation(conversation.id)}
                   >
@@ -70,21 +70,21 @@ const ChatSidebar = () => {
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <div className="h-full w-full flex items-center justify-center bg-gray-200">
-                          <User className="h-6 w-6 text-gray-500" />
+                        <div className="h-full w-full flex items-center justify-center bg-muted">
+                          <User className="h-6 w-6 text-muted-foreground" />
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium text-sm truncate">
+                      <h3 className="font-medium text-sm truncate text-foreground">
                         {legend?.name || "Unknown Legend"}
                       </h3>
-                      <p className="text-xs text-gray-500 truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {lastMessage?.content.substring(0, 30) || "No messages"}
                         {lastMessage?.content.length > 30 ? "..." : ""}
                       </p>
                     </div>
-                    <div className="text-xs text-gray-400 ml-2">
+                    <div className="text-xs text-muted-foreground ml-2">
                       {conversation.lastUpdated.toLocaleDateString()}
                     </div>
                   </div>
