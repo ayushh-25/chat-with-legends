@@ -80,7 +80,7 @@ const ChatMessages = () => {
 
   if (!currentConversation) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-scifi-secondary text-scifi-primary">
+      <div className="flex-1 flex items-center justify-center bg-muted text-foreground">
         <div className="text-center">
           <p>Select or start a conversation</p>
         </div>
@@ -89,7 +89,7 @@ const ChatMessages = () => {
   }
 
   return (
-    <ScrollArea className="flex-1 p-4 bg-scifi-secondary">
+    <ScrollArea className="flex-1 p-4 bg-background">
       <div className="space-y-4">
         {currentConversation.messages.map((message) => {
           const isLegend = message.sender === 'legend';
@@ -104,7 +104,7 @@ const ChatMessages = () => {
                 className={`flex ${isLegend ? 'flex-row' : 'flex-row-reverse'} max-w-[80%] group`}
               >
                 <div className={`flex items-end ${isLegend ? 'mr-2' : 'ml-2'}`}>
-                  <div className="h-8 w-8 rounded-full overflow-hidden border border-scifi-primary">
+                  <div className="h-8 w-8 rounded-full overflow-hidden border border-border">
                     {isLegend && messageLegend ? (
                       <img
                         src={messageLegend.image}
@@ -112,7 +112,7 @@ const ChatMessages = () => {
                         className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="h-full w-full flex items-center justify-center bg-scifi-accent text-white">
+                      <div className="h-full w-full flex items-center justify-center bg-primary text-primary-foreground">
                         <User className="h-5 w-5" />
                       </div>
                     )}
@@ -121,16 +121,18 @@ const ChatMessages = () => {
                 <div
                   className={`rounded-lg px-4 py-2 ${
                     isLegend
-                      ? 'bg-scifi-dark border border-scifi-primary'
-                      : 'bg-scifi-accent'
+                      ? 'bg-muted border border-border'
+                      : 'bg-primary'
                   }`}
                 >
-                  <div className={`text-xs mb-1 ${isLegend ? 'text-scifi-primary' : 'text-white'}`}>
+                  <div className={`text-xs mb-1 ${isLegend ? 'text-foreground' : 'text-primary-foreground'}`}>
                     {isLegend ? messageLegend?.name || 'Legend' : 'You'}
                   </div>
-                  <p className="text-sm whitespace-pre-wrap text-white">{message.content}</p>
+                  <p className={`text-sm whitespace-pre-wrap ${isLegend ? 'text-foreground' : 'text-primary-foreground'}`}>
+                    {message.content}
+                  </p>
                   <div className="flex items-center justify-between mt-1">
-                    <span className="text-xs opacity-70 text-scifi-light">
+                    <span className={`text-xs opacity-70 ${isLegend ? 'text-muted-foreground' : 'text-primary-foreground/70'}`}>
                       {new Date(message.timestamp).toLocaleTimeString([], {
                         hour: '2-digit',
                         minute: '2-digit',
@@ -150,9 +152,9 @@ const ChatMessages = () => {
                         }}
                       >
                         {playingAudio === message.id ? (
-                          <VolumeX className="h-4 w-4 text-scifi-primary" />
+                          <VolumeX className="h-4 w-4" />
                         ) : (
-                          <Volume className="h-4 w-4 text-scifi-primary" />
+                          <Volume className="h-4 w-4" />
                         )}
                       </Button>
                     )}
