@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 export interface Legend {
@@ -12,7 +11,7 @@ export interface Message {
   id: string;
   content: string;
   sender: 'user' | 'legend';
-  legendId?: string;
+  legendId: string;
   timestamp: Date;
 }
 
@@ -29,7 +28,7 @@ interface ChatContextType {
   currentConversation: Conversation | null;
   selectLegend: (legendId: string) => void;
   selectConversation: (conversationId: string) => void;
-  sendMessage: (content: string) => void;
+  sendMessage: (content: string, overrideLegendId?: string) => void;
   startNewConversation: (legendId: string) => void;
 }
 
@@ -69,19 +68,29 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
 
   const selectLegend = (legendId: string) => {
-    // Find existing conversation with this legend or create a new one
-    const existingConvo = conversations.find(conv => conv.legendId === legendId);
-    if (existingConvo) {
-      setCurrentConversation(existingConvo);
+    if (currentConversation) {
+      const updatedConversation = {
+        ...currentConversation,
+        legendId
+      };
+      setCurrentConversation(updatedConversation);
+      setConversations(prev => 
+        prev.map(conv => 
+          conv.id === currentConversation.id ? updatedConversation : conv
+        )
+      );
+      
+      const switchMessage: Message = {
+        id: `msg-${Date.now()}`,
+        content: `Chat continued with ${legends.find(l => l.id === legendId)?.name}`,
+        sender: 'legend',
+        legendId,
+        timestamp: new Date()
+      };
+      
+      sendMessage(switchMessage.content, legendId);
     } else {
       startNewConversation(legendId);
-    }
-  };
-
-  const selectConversation = (conversationId: string) => {
-    const conversation = conversations.find(conv => conv.id === conversationId);
-    if (conversation) {
-      setCurrentConversation(conversation);
     }
   };
 
@@ -108,35 +117,39 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCurrentConversation(newConversation);
   };
 
-  const sendMessage = (content: string) => {
+  const sendMessage = (content: string, overrideLegendId?: string) => {
     if (!currentConversation) return;
 
-    // User message
     const userMessage: Message = {
       id: `msg-${Date.now()}`,
       content,
       sender: 'user',
+      legendId: currentConversation.legendId,
       timestamp: new Date()
     };
 
-    // Simulate legend response after user message
-    const legend = legends.find(l => l.id === currentConversation.legendId);
+    const legendId = overrideLegendId || currentConversation.legendId;
+    const legend = legends.find(l => l.id === legendId);
+    
     const legendMessage: Message = {
       id: `msg-${Date.now() + 1}`,
       content: `${legend?.name} response to: "${content}"`,
       sender: 'legend',
-      legendId: currentConversation.legendId,
+      legendId,
       timestamp: new Date()
     };
 
     const updatedConversation = {
       ...currentConversation,
       messages: [...currentConversation.messages, userMessage, legendMessage],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
+      legendId
     };
 
     setConversations(prev => 
-      prev.map(conv => conv.id === currentConversation.id ? updatedConversation : conv)
+      prev.map(conv => 
+        conv.id === currentConversation.id ? updatedConversation : conv
+      )
     );
     setCurrentConversation(updatedConversation);
   };

@@ -93,6 +93,7 @@ const ChatMessages = () => {
       <div className="space-y-4">
         {currentConversation.messages.map((message) => {
           const isLegend = message.sender === 'legend';
+          const messageLegend = legends.find(l => l.id === message.legendId);
           
           return (
             <div
@@ -104,10 +105,10 @@ const ChatMessages = () => {
               >
                 <div className={`flex items-end ${isLegend ? 'mr-2' : 'ml-2'}`}>
                   <div className="h-8 w-8 rounded-full overflow-hidden border border-scifi-primary">
-                    {isLegend && currentLegend ? (
+                    {isLegend && messageLegend ? (
                       <img
-                        src={currentLegend.image}
-                        alt={currentLegend.name}
+                        src={messageLegend.image}
+                        alt={messageLegend.name}
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -125,7 +126,7 @@ const ChatMessages = () => {
                   }`}
                 >
                   <div className={`text-xs mb-1 ${isLegend ? 'text-scifi-primary' : 'text-white'}`}>
-                    {isLegend ? currentLegend?.name || 'Legend' : 'You'}
+                    {isLegend ? messageLegend?.name || 'Legend' : 'You'}
                   </div>
                   <p className="text-sm whitespace-pre-wrap text-white">{message.content}</p>
                   <div className="flex items-center justify-between mt-1">
@@ -168,4 +169,3 @@ const ChatMessages = () => {
 };
 
 export default ChatMessages;
-
