@@ -117,6 +117,13 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCurrentConversation(newConversation);
   };
 
+  const selectConversation = (conversationId: string) => {
+    const conversation = conversations.find(conv => conv.id === conversationId);
+    if (conversation) {
+      setCurrentConversation(conversation);
+    }
+  };
+
   const sendMessage = (content: string, overrideLegendId?: string) => {
     if (!currentConversation) return;
 
