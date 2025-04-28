@@ -12,20 +12,19 @@ const ChatPage = () => {
   const { currentConversation } = useChatContext();
   const isMobile = useIsMobile();
 
-  // Redirect to home if no conversation is selected
   if (!currentConversation) {
     return <Navigate to="/" />;
   }
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-gray-50">
+    <div className="h-screen flex flex-col md:flex-row bg-gradient-sci">
       {/* Sidebar - Hidden on mobile when in chat view */}
-      <div className={`${isMobile ? 'hidden' : 'w-80'} border-r`}>
+      <div className={`${isMobile ? 'hidden' : 'w-80'} border-r border-scifi-primary`}>
         <ChatSidebar />
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden bg-scifi-secondary">
         <ChatHeader />
         <ChatMessages />
         <ChatInput />
@@ -35,3 +34,4 @@ const ChatPage = () => {
 };
 
 export default ChatPage;
+
