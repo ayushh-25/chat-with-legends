@@ -13,19 +13,19 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <ChatProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <ChatProvider>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </ChatProvider>
-    </TooltipProvider>
+        </ChatProvider>
+      </TooltipProvider>
+    </BrowserRouter>
   </QueryClientProvider>
 );
 
