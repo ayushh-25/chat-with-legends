@@ -45,22 +45,22 @@ export const useChatContext = () => {
 export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [legends] = useState<Legend[]>([
     {
-      id: 'socrates',
-      name: 'Socrates',
-      image: 'https://images.unsplash.com/photo-1577083552762-4402a3352fe1',
-      description: 'Ancient Greek philosopher known for his wisdom and the Socratic method'
+      id: 'elon',
+      name: 'Elon Musk',
+      image: 'assets/images/elon.webp',
+      description: 'CEO of SpaceX and Tesla, Visionary of the future.'
     },
     {
-      id: 'einstein',
-      name: 'Albert Einstein',
-      image: 'https://images.unsplash.com/photo-1618506469810-282bef2b30b3',
-      description: 'Theoretical physicist who developed the theory of relativity'
+      id: 'osho',
+      name: 'Osho',
+      image: 'assets/images/osho.webp',
+      description: 'Philosopher and spiritual teacher, known for his teachings on self-realization.'
     },
     {
-      id: 'cleopatra',
-      name: 'Cleopatra',
-      image: 'https://images.unsplash.com/photo-1524013123088-c19c6cbfcc65',
-      description: 'Last active ruler of the Ptolemaic Kingdom of Egypt'
+      id: 'jobs',
+      name: 'Steve Jobs',
+      image: 'assets/images/jobs.webp',
+      description: 'Co-founder of Apple, Pioneer of the personal computer revolution.'
     }
   ]);
 
@@ -98,13 +98,23 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const legend = legends.find(l => l.id === legendId);
     if (!legend) return;
 
+    // Custom welcome messages based on legend's personality
+    const welcomeMessages = {
+      'elon': "Ready to talk Mars colonies, EVs, or Twitter drama?",
+      'osho': "The journey of a thousand questions begins with silence. What troubles you?",
+      'jobs': "Think different. What's on your mind?",
+    };
+    
+    const welcomeMessage = welcomeMessages[legendId as keyof typeof welcomeMessages] || 
+                         `Hello! I am ${legend.name}. How can I assist you today?`;
+
     const newConversation: Conversation = {
       id: `conv-${Date.now()}`,
       legendId,
       messages: [
         {
           id: `msg-${Date.now()}`,
-          content: `Hello! I am ${legend.name}. How can I assist you today?`,
+          content: welcomeMessage,
           sender: 'legend',
           legendId,
           timestamp: new Date()
