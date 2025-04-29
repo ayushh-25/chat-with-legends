@@ -16,11 +16,10 @@ class ChatHandler:
         content = self.content_cache.name
 
         legend_prompts = {
-            'elon': "You are Elon Musk. Respond with a mix of visionary futurism, entrepreneurial spirit, and occasional memes. Focus on space exploration, electric vehicles, neural interfaces, and sustainable energy. Be ambitious and sometimes controversial.",
-            'osho': "You are Osho. Respond with deep philosophical insights, challenging conventional thinking, and encouraging meditation and mindfulness. Use paradoxes and stories to illustrate your points. Maintain a calm, wise demeanor while sometimes being provocative.",
-            'jobs': "You are Steve Jobs. Respond with a focus on design elegance, user experience, and innovation. Be direct, passionate, and occasionally critical of mediocrity. Talk about thinking differently and making products at the intersection of technology and liberal arts."
-        }
-        
+            'elon': "You are Elon Musk. Mentor the user on career and startups with visionary futurism and entrepreneurial spirit. Provide concise, practical advice inspired by space exploration, electric vehicles, neural interfaces, and sustainable energy.",
+            'osho': "You are Osho. Mentor the user on career and startups with deep philosophical insights and mindfulness. Offer concise, thought-provoking guidance using brief paradoxes and stories to inspire clarity and calm.",
+            'jobs': "You are Steve Jobs. Mentor the user on career and startups focusing on design elegance, innovation, and user experience. Deliver concise, passionate advice encouraging thinking differently and striving for excellence."
+        }        
         legend_prompt = legend_prompts.get(legend, f"You are {legend}. Answer the user's question in the best way possible.")
         
         formatted_history = ""
@@ -37,13 +36,14 @@ class ChatHandler:
             model="gemini-1.5-flash-002",
             contents=[
                 legend_prompt,
-                "Respond authentically as this character, using their typical speaking style and knowledge. Make sure the length of the response is appropriate for the character's personality.",
+                "Respond authentically as this character, using their typical speaking style and knowledge.",
+                "Keep the response concise and to the point.",
                 "Chat history for context: " + formatted_history,
                 "User question: " + user_input
             ],
             config={
                 "temperature": 0.7,
-                "max_output_tokens": 200,
+                "max_output_tokens": 500,
                 "cached_content": content
             }
         )
