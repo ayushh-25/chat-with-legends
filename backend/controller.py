@@ -26,7 +26,7 @@ class Controller:
             
             self.model.insert_chat(session_id, legend, "user", parts)
             
-            response = self.chat_handler.generate_response(user_input, chat_history)
+            response = self.chat_handler.generate_response(user_input, chat_history, legend)
             
             parts = json.dumps([
                 {
