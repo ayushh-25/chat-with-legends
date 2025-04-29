@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { useToast } from '@/hooks/use-toast';
@@ -75,30 +74,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const { toast } = useToast();
 
   const selectLegend = (legendId: string) => {
-    if (currentConversation) {
-      const updatedConversation = {
-        ...currentConversation,
-        legendId
-      };
-      setCurrentConversation(updatedConversation);
-      setConversations(prev => 
-        prev.map(conv => 
-          conv.id === currentConversation.id ? updatedConversation : conv
-        )
-      );
-      
-      const switchMessage: Message = {
-        id: `msg-${Date.now()}`,
-        content: `Chat continued with ${legends.find(l => l.id === legendId)?.name}`,
-        sender: 'legend',
-        legendId,
-        timestamp: new Date()
-      };
-      
-      sendMessage(switchMessage.content, legendId);
-    } else {
-      startNewConversation(legendId);
-    }
+    // Always create a new conversation when selecting a legend
+    startNewConversation(legendId);
   };
 
   const startNewConversation = (legendId: string) => {
@@ -269,4 +246,3 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };
-

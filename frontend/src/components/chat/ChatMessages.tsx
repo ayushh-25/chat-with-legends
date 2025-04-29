@@ -61,7 +61,11 @@ const ChatMessages = () => {
                       : 'bg-primary'
                   }`}
                 >
-                  <div className={`text-xs mb-1 ${isLegend ? 'text-foreground' : 'text-primary-foreground'}`}>
+                  <div className={`text-xs mb-1 ${
+                    isLegend 
+                    ? 'text-legend-purple font-medium' 
+                    : 'text-primary-foreground'
+                  }`}>
                     {isLegend ? messageLegend?.name || 'Legend' : 'You'}
                   </div>
                   <p className={`text-sm whitespace-pre-wrap ${isLegend ? 'text-foreground' : 'text-primary-foreground'}`}>

@@ -22,8 +22,9 @@ const ChatHeader = () => {
   );
 
   const handleLegendChange = (legendId: string) => {
+    // Start a new conversation with the selected legend
     selectLegend(legendId);
-    toast(`Now chatting with ${legends.find(l => l.id === legendId)?.name}`);
+    toast(`Started a new chat with ${legends.find(l => l.id === legendId)?.name}`);
   };
 
   return (
@@ -49,7 +50,7 @@ const ChatHeader = () => {
                 />
               </div>
               <div>
-                <h2 className="font-semibold text-foreground">
+                <h2 className="font-semibold text-legend-purple">
                   {currentLegend.name}
                 </h2>
                 <p className="text-xs text-muted-foreground">
