@@ -14,8 +14,7 @@ class ChatHandler:
             self.content_cache = self.create_context_cache()
         
         content = self.content_cache.name
-        
-        # Customize prompts based on the legend
+
         legend_prompts = {
             'elon': "You are Elon Musk. Respond with a mix of visionary futurism, entrepreneurial spirit, and occasional memes. Focus on space exploration, electric vehicles, neural interfaces, and sustainable energy. Be ambitious and sometimes controversial.",
             'osho': "You are Osho. Respond with deep philosophical insights, challenging conventional thinking, and encouraging meditation and mindfulness. Use paradoxes and stories to illustrate your points. Maintain a calm, wise demeanor while sometimes being provocative.",
@@ -24,7 +23,6 @@ class ChatHandler:
         
         legend_prompt = legend_prompts.get(legend, f"You are {legend}. Answer the user's question in the best way possible.")
         
-        # Format chat history for the context
         formatted_history = ""
         if chat_history:
             for entry in chat_history:
@@ -39,13 +37,13 @@ class ChatHandler:
             model="gemini-1.5-flash-002",
             contents=[
                 legend_prompt,
-                "Respond authentically as this character, using their typical speaking style and knowledge.",
+                "Respond authentically as this character, using their typical speaking style and knowledge. Make sure the length of the response is appropriate for the character's personality.",
                 "Chat history for context: " + formatted_history,
                 "User question: " + user_input
             ],
             config={
                 "temperature": 0.7,
-                "max_output_tokens": 800,
+                "max_output_tokens": 200,
                 "cached_content": content
             }
         )
