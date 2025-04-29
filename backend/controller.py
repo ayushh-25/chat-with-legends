@@ -1,3 +1,4 @@
+
 import json
 from model import Model
 from chat_handler import ChatHandler
@@ -43,6 +44,7 @@ class Controller:
             }
             
         except Exception as e:
+            print(f"Error in handle_chat: {str(e)}")
             return {
                 "status_code": 0,
                 "message": str(e),

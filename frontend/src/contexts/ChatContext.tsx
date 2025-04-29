@@ -1,4 +1,7 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from '@/hooks/use-toast';
 
 export interface Legend {
   id: string;
@@ -20,6 +23,7 @@ export interface Conversation {
   legendId: string;
   messages: Message[];
   lastUpdated: Date;
+  sessionId: string;
 }
 
 interface ChatContextType {
@@ -28,8 +32,9 @@ interface ChatContextType {
   currentConversation: Conversation | null;
   selectLegend: (legendId: string) => void;
   selectConversation: (conversationId: string) => void;
-  sendMessage: (content: string, overrideLegendId?: string) => void;
+  sendMessage: (content: string, overrideLegendId?: string) => Promise<void>;
   startNewConversation: (legendId: string) => void;
+  isLoading: boolean;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -66,6 +71,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [currentConversation, setCurrentConversation] = useState<Conversation | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const selectLegend = (legendId: string) => {
     if (currentConversation) {
@@ -108,6 +115,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const welcomeMessage = welcomeMessages[legendId as keyof typeof welcomeMessages] || 
                          `Hello! I am ${legend.name}. How can I assist you today?`;
 
+    const sessionId = uuidv4();
+
     const newConversation: Conversation = {
       id: `conv-${Date.now()}`,
       legendId,
@@ -120,7 +129,8 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           timestamp: new Date()
         }
       ],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
+      sessionId
     };
 
     setConversations(prev => [...prev, newConversation]);
@@ -134,7 +144,7 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const sendMessage = (content: string, overrideLegendId?: string) => {
+  const sendMessage = async (content: string, overrideLegendId?: string) => {
     if (!currentConversation) return;
 
     const userMessage: Message = {
@@ -147,18 +157,11 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
     const legendId = overrideLegendId || currentConversation.legendId;
     const legend = legends.find(l => l.id === legendId);
-    
-    const legendMessage: Message = {
-      id: `msg-${Date.now() + 1}`,
-      content: `${legend?.name} response to: "${content}"`,
-      sender: 'legend',
-      legendId,
-      timestamp: new Date()
-    };
 
+    // Update conversation with user message first
     const updatedConversation = {
       ...currentConversation,
-      messages: [...currentConversation.messages, userMessage, legendMessage],
+      messages: [...currentConversation.messages, userMessage],
       lastUpdated: new Date(),
       legendId
     };
@@ -169,6 +172,88 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       )
     );
     setCurrentConversation(updatedConversation);
+    
+    // Show loading state
+    setIsLoading(true);
+    
+    try {
+      // Make API call to backend
+      const response = await fetch('http://localhost:3050/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          'user_input': content,
+          'session_id': currentConversation.sessionId,
+          'legend': legendId
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to get response from server');
+      }
+      
+      const data = await response.json();
+      
+      if (data.status_code === 0) {
+        throw new Error(data.message || 'Error in AI response');
+      }
+      
+      // Create AI response message
+      const legendMessage: Message = {
+        id: `msg-${Date.now() + 1}`,
+        content: data.response,
+        sender: 'legend',
+        legendId,
+        timestamp: new Date()
+      };
+
+      // Update conversation with AI response
+      const finalConversation = {
+        ...updatedConversation,
+        messages: [...updatedConversation.messages, legendMessage],
+        lastUpdated: new Date()
+      };
+
+      setConversations(prev => 
+        prev.map(conv => 
+          conv.id === currentConversation.id ? finalConversation : conv
+        )
+      );
+      setCurrentConversation(finalConversation);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to get AI response",
+        variant: "destructive"
+      });
+      
+      // Add error message to the conversation
+      const errorMessage: Message = {
+        id: `msg-${Date.now() + 1}`,
+        content: "Sorry, I couldn't process your request. Please try again later.",
+        sender: 'legend',
+        legendId,
+        timestamp: new Date()
+      };
+      
+      const errorConversation = {
+        ...updatedConversation,
+        messages: [...updatedConversation.messages, errorMessage],
+        lastUpdated: new Date()
+      };
+      
+      setConversations(prev => 
+        prev.map(conv => 
+          conv.id === currentConversation.id ? errorConversation : conv
+        )
+      );
+      setCurrentConversation(errorConversation);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const value = {
@@ -178,8 +263,10 @@ export const ChatProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     selectLegend,
     selectConversation,
     sendMessage,
-    startNewConversation
+    startNewConversation,
+    isLoading
   };
 
   return <ChatContext.Provider value={value}>{children}</ChatContext.Provider>;
 };
+

@@ -4,15 +4,17 @@ import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useChatContext } from '@/contexts/ChatContext';
+import { Loader2 } from 'lucide-react';
 
 const ChatInput = () => {
   const [message, setMessage] = useState('');
-  const { sendMessage, currentConversation } = useChatContext();
+  const { sendMessage, currentConversation, isLoading } = useChatContext();
 
-  const handleSendMessage = () => {
-    if (message.trim() && currentConversation) {
-      sendMessage(message.trim());
+  const handleSendMessage = async () => {
+    if (message.trim() && currentConversation && !isLoading) {
+      const userMessage = message.trim();
       setMessage('');
+      await sendMessage(userMessage);
     }
   };
 
@@ -32,13 +34,13 @@ const ChatInput = () => {
           onKeyDown={handleKeyDown}
           placeholder="Type your message..."
           className="flex-1 min-h-[60px] max-h-[120px] bg-background border-input text-foreground placeholder:text-muted-foreground focus-visible:ring-ring"
-          disabled={!currentConversation}
+          disabled={!currentConversation || isLoading}
         />
         <Button 
           onClick={handleSendMessage}
-          disabled={!message.trim() || !currentConversation}
+          disabled={!message.trim() || !currentConversation || isLoading}
         >
-          <Send className="h-5 w-5" />
+          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
         </Button>
       </div>
     </div>
